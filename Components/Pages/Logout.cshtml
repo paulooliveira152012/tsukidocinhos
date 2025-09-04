@@ -1,0 +1,11 @@
+@page "/logout"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null; // opcional
+}
+<form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post" id="logoutForm">
+    @* O anti-forgery token é inserido automaticamente pelo TagHelper *@
+</form>
+<script>
+    document.getElementById('logoutForm').submit();
+</script>

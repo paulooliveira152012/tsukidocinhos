@@ -63,3 +63,19 @@ build_metadata.AdditionalFiles.CssScope = b-h9fhkqbnjx
 [/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Components/Pages/OrderHandling.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9PcmRlckhhbmRsaW5nLnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-5res8izhhl
+
+[/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Components/Pages/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Mb2dvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Components/Pages/Shared/_loginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9TaGFyZWQvX2xvZ2luUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Pages/Shared/_LoginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19Mb2dpblBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 

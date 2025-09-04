@@ -1,22 +1,37 @@
 using Microsoft.EntityFrameworkCore;
 using BrigadeiroApp.Data;
+using BrigadeiroApp.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ➜ Cria caminho ABSOLUTO para o arquivo app.db dentro da pasta do app
-var dbPath = Path.Combine(builder.Environment.ContentRootPath, "app.db");
+// Caminho do SQLite (igual você já fez)
+var dataDir = Environment.GetEnvironmentVariable("DATA_DIR");
+var dbPath = dataDir is not null
+    ? Path.Combine(dataDir, "app.db")
+    : Path.Combine(builder.Environment.ContentRootPath, "app.db");
+Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+var cs = $"Data Source={dbPath}";
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlite(cs));
 
-// ➜ Se existir ConnectionStrings:Default, usa; senão, cai no fallback com dbPath
-var connString = builder.Configuration.GetConnectionString("Default")
-                ?? $"Data Source={dbPath}";
+// 🔐 ASP.NET Core Identity (usuários/roles + UI)
+builder.Services
+    .AddDefaultIdentity<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 6;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
-// EF Core
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlite(connString));
+builder.Services.AddRazorPages(); // necessário para Identity UI
 
-// Blazor (template novo)
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+// Blazor
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+builder.Services.AddCascadingAuthenticationState();
+
 
 var app = builder.Build();
 
@@ -28,19 +43,47 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-// app.UseAuthentication();
+
+// ordem correta: Auth -> Authorize -> Antiforgery
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 
+// Blazor + Identity UI pages
 app.MapRazorComponents<BrigadeiroApp.Components.App>()
    .AddInteractiveServerRenderMode();
+app.MapRazorPages(); // expõe /Identity/Account/Login etc.
 
-// ➜ APLICA MIGRATIONS AUTOMATICAMENTE AO SUBIR
+// Migrações + seed de usuários/roles
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    app.Logger.LogInformation("SQLite DB em: {path}", dbPath);
-    db.Database.Migrate(); // cria/atualiza tabelas
+    await db.Database.MigrateAsync();
+
+    var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    // cria roles se não existirem
+    foreach (var role in new[] { "Marcos", "Gabi" })
+        if (!await roleMgr.RoleExistsAsync(role))
+            await roleMgr.CreateAsync(new IdentityRole(role));
+
+    // cria usuários iniciais (troque emails/senhas depois)
+    async Task EnsureUser(string email, string password, string role)
+    {
+        var u = await userMgr.FindByEmailAsync(email);
+        if (u is null)
+        {
+            u = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
+            var ok = await userMgr.CreateAsync(u, password);
+            if (!ok.Succeeded) throw new Exception(string.Join(';', ok.Errors.Select(e => e.Description)));
+        }
+        if (!await userMgr.IsInRoleAsync(u, role))
+            await userMgr.AddToRoleAsync(u, role);
+    }
+
+    await EnsureUser("marcos@example.com", "Marcos123!", "Marcos");
+    await EnsureUser("gabi@example.com",   "Gabi123!",   "Gabi");
 }
 
 app.Run();

@@ -1,4 +1,7 @@
 @page "/orderHandling"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Gabi")]
+
+
 @inject AppDbContext Db
 
 <h2 class="oh-title">Pedidos</h2>

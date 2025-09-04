@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("BrigadeiroApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d03bc27e1abb3633e9ffe7943ca272f8961f7e88")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+10880b25ed1520df2d9cfc19da1c894f04051678")]
 [assembly: System.Reflection.AssemblyProductAttribute("BrigadeiroApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BrigadeiroApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

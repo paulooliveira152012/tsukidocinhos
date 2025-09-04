@@ -1,5 +1,11 @@
 @page "/newOrder"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Marcos,Gabi")]
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+
 @inject AppDbContext Db
+@inject AuthenticationStateProvider Auth
 
 <h2>Nova Ordem</h2>
 
@@ -7,11 +13,17 @@
 {
     <p>Carregando tipos...</p>
 }
+else if (types.Count == 0)
+{
+    <p><b>Nenhum tipo de brigadeiro cadastrado.</b> Cadastre ao menos um tipo para criar pedidos.</p>
+}
 else
 {
     <EditForm Model="@model" OnValidSubmit="@Save">
         <DataAnnotationsValidator />
-        <div style="display:flex; gap:10px; margin-bottom:8px">
+        <ValidationSummary />
+
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px">
             <input placeholder="Cliente" @bind="model.CustomerName" />
             <input placeholder="Telefone" @bind="model.CustomerPhone" />
             <input type="date" @bind="deliveryDate" />
@@ -20,7 +32,7 @@ else
         <h4>Itens</h4>
         @foreach (var item in items)
         {
-            <div style="display:flex; gap:8px; margin-bottom:6px">
+            <div style="display:flex; gap:8px; margin-bottom:6px; align-items:center">
                 <select @bind="item.BrigadeiroTypeId">
                     @foreach (var t in types)
                     {
@@ -34,7 +46,9 @@ else
         <button type="button" @onclick="AddItem">+ Adicionar item</button>
 
         <div style="margin-top:12px">
-            <button type="submit">Salvar ordem</button>
+            <button type="submit" disabled="@(!CanSave || saving)">
+                @(saving ? "Salvando..." : "Salvar ordem")
+            </button>
         </div>
     </EditForm>
 
@@ -44,44 +58,87 @@ else
 @code {
     private List<BrigadeiroType>? types;
     private Order model = new();
-    private List<OrderItem> items = new() { new OrderItem { Quantity = 1, BrigadeiroTypeId = 1 } };
+    private List<OrderItem> items = new();
     private DateTime? deliveryDate = DateTime.Today;
     private string? message;
+    private bool saving;
+
+    bool CanSave =>
+        types is not null &&
+        types.Count > 0 &&
+        !string.IsNullOrWhiteSpace(model.CustomerName) &&
+        items.Count > 0 &&
+        items.All(i => i.Quantity > 0 && types.Any(t => t.Id == i.BrigadeiroTypeId));
 
     protected override async Task OnInitializedAsync()
     {
-        types = await Db.BrigadeiroTypes.Where(t => t.Active).OrderBy(t => t.Name).ToListAsync();
-        if (types.Count > 0 && items[0].BrigadeiroTypeId == 0)
-            items[0].BrigadeiroTypeId = types[0].Id;
+        types = await Db.BrigadeiroTypes
+            .Where(t => t.Active)
+            .OrderBy(t => t.Name)
+            .ToListAsync();
+
+        // Garante 1 item inicial com o primeiro tipo disponível
+        if (types.Count > 0 && items.Count == 0)
+        {
+            items.Add(new OrderItem { Quantity = 1, BrigadeiroTypeId = types[0].Id });
+        }
     }
 
-    void AddItem() => items.Add(new OrderItem { Quantity = 1, BrigadeiroTypeId = types!.First().Id });
+    void AddItem()
+    {
+        if (types is null || types.Count == 0) return;
+        items.Add(new OrderItem { Quantity = 1, BrigadeiroTypeId = types[0].Id });
+    }
+
     void RemoveItem(OrderItem it) => items.Remove(it);
 
     async Task Save()
     {
-        if (types is null || items.Count == 0 || string.IsNullOrWhiteSpace(model.CustomerName)) return;
+        if (!CanSave) { message = "Preencha cliente e ao menos 1 item válido."; return; }
 
-        // congelar preço/custo do momento do pedido
-        foreach (var it in items)
+        saving = true;
+        try
         {
-            var t = types.First(x => x.Id == it.BrigadeiroTypeId);
-            it.UnitPrice = t.UnitPrice;
-            it.UnitCost  = t.UnitCost;
+            // Congela preço/custo do momento do pedido
+            foreach (var it in items)
+            {
+                var t = types!.First(x => x.Id == it.BrigadeiroTypeId);
+                it.UnitPrice = t.UnitPrice;
+                it.UnitCost  = t.UnitCost;
+            }
+
+            model.Items = items.ToList();
+            model.DeliveryDate = deliveryDate;
+
+            model.TotalRevenue = model.Items.Sum(i => i.UnitPrice * i.Quantity);
+            model.TotalCost    = model.Items.Sum(i => i.UnitCost  * i.Quantity);
+            model.Profit       = model.TotalRevenue - model.TotalCost;
+
+            // Quem criou (Gabi tem acesso total; Marcos limitado à criação)
+            var authState = await Auth.GetAuthenticationStateAsync();
+            var user = authState.User;
+            model.CreatedBy =
+                user.IsInRole("Gabi")   ? "Gabi" :
+                user.IsInRole("Marcos") ? "Marcos" :
+                (user.Identity?.Name ?? "desconhecido");
+
+            Db.Orders.Add(model);
+            await Db.SaveChangesAsync();
+
+            message = $"Ordem #{model.Id} criada! Receita: {model.TotalRevenue:C} | Lucro: {model.Profit:C}";
+
+            // Limpa para próxima criação
+            model = new();
+            items = new() { new OrderItem { Quantity = 1, BrigadeiroTypeId = types!.First().Id } };
+            deliveryDate = DateTime.Today;
         }
-
-        model.Items = items.ToList();
-        model.DeliveryDate = deliveryDate;
-
-        model.TotalRevenue = model.Items.Sum(i => i.UnitPrice * i.Quantity);
-        model.TotalCost    = model.Items.Sum(i => i.UnitCost  * i.Quantity);
-        model.Profit       = model.TotalRevenue - model.TotalCost;
-        model.CreatedBy    = "Marcos";
-
-        Db.Orders.Add(model);
-        await Db.SaveChangesAsync();
-
-        message = $"Ordem #{model.Id} criada! Receita: {model.TotalRevenue:C} | Lucro: {model.Profit:C}";
-        model = new(); items = new() { new OrderItem { Quantity = 1, BrigadeiroTypeId = types.First().Id } };
+        catch (Exception ex)
+        {
+            message = $"Erro ao salvar: {ex.Message}";
+        }
+        finally
+        {
+            saving = false;
+        }
     }
 }
