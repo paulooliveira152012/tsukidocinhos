@@ -1,0 +1,166 @@
+/* container e tipografia */
+.oh-title {
+  margin-bottom: 0.5rem;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.5rem 0 1rem;
+}
+.muted {
+  color: #6b7280;
+} /* cinza */
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* botões */
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 0.6rem;
+  padding: 0.55rem 0.9rem;
+  background: #111827;
+  color: #fff;
+  cursor: pointer;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-outline {
+  background: transparent;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+.w-full {
+  width: 100%;
+}
+
+/* badges de status */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-new {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.badge-progress {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.badge-delivered {
+  background: #dcfce7;
+  color: #166534;
+}
+.badge-cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* tabela desktop */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  color: white;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+th,
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f0f2f5;
+  vertical-align: top;
+}
+th {
+  background: #f8fafc;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+tr:hover {
+  background: #fafafa;
+}
+ul.items {
+  margin: 0.25rem 0;
+  padding-left: 1.2rem;
+}
+
+/* cards mobile */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+  margin-bottom: 10px;
+  color: white;
+}
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.card .id {
+  font-weight: 700;
+}
+
+/* alternância de layout */
+.desktop-table {
+  display: none;
+}
+.mobile-cards {
+  display: block;
+  gap: 20px;
+}
+
+@media (min-width: 1200px) {
+  .desktop-table {
+    display: block;
+  }
+  .mobile-cards {
+    display: none;
+  }
+}
+
+/* modo escuro leve (opcional) */
+@media (prefers-color-scheme: dark) {
+  .table-wrap,
+  .card {
+    background: #0b0f14;
+    border-color: #1f2937;
+  }
+  th {
+    background: #111827;
+  }
+  tr:hover {
+    background: #0f172a;
+  }
+  .btn {
+    background: #2563eb;
+  }
+  .btn-outline {
+    color: #e5e7eb;
+    border-color: #374151;
+  }
+  .muted {
+    color: #9ca3af;
+  }
+}

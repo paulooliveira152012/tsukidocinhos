@@ -1,54 +1,120 @@
 @page "/orderHandling"
 @inject AppDbContext Db
 
-<h2>Pedidos (Gabi)</h2>
+<h2 class="oh-title">Pedidos</h2>
 
-<div style="display:flex; gap:12px; align-items:center">
+<div class="toolbar">
   <label>Data de entrega:</label>
   <input type="date" @bind="filterDate" />
-  <button @onclick="Load">Filtrar</button>
+  <button class="btn" @onclick="Load">Filtrar</button>
 </div>
 
-@if (orders is null) { <p>Carregando...</p> }
-else if (orders.Count == 0) { <p>Nenhuma ordem.</p> }
+@if (orders is null)
+{
+    <p>Carregando...</p>
+}
+else if (orders.Count == 0)
+{
+    <p>Nenhuma ordem.</p>
+}
 else
 {
-  <table border="1" cellpadding="6" style="margin-top:10px">
-    <thead>
-      <tr>
-        <th>#</th><th>Cliente</th><th>Entrega</th><th>Itens</th>
-        <th>Receita</th><th>Lucro</th><th>Split</th><th>Status</th><th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-    @foreach (var o in orders)
-    {
-      <tr>
-        <td>@o.Id</td>
-        <td>@o.CustomerName<br /><small>@o.CustomerPhone</small></td>
-        <td>@o.DeliveryDate:yyyy-MM-dd</td>
-        <td>
-          <ul style="margin:0">
-            @foreach (var it in o.Items)
+    <!-- MOBILE: cards -->
+    <div class="mobile-cards cards">
+        @foreach (var o in orders)
+        {
+            <div class="card">
+                <div class="card-head">
+                    <div class="id">#@o.Id</div>
+                    <div class="@StatusClass(o.Status)">@o.Status</div>
+                </div>
+                <div class="row">
+                    <div class="label">Cliente</div>
+                    <div class="value">
+                        <div>@o.CustomerName</div>
+                        <small class="muted">@o.CustomerPhone</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="label">Entrega</div>
+                    <div class="value">@o.DeliveryDate:yyyy-MM-dd</div>
+                </div>
+                <div class="row">
+                    <div class="label">Itens</div>
+                    <div class="value">
+                        <ul class="items">
+                            @foreach (var it in o.Items)
+                            {
+                                <li>@it.BrigadeiroType!.Name x @it.Quantity</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="summary">
+                    <span class="chip">Receita: @o.TotalRevenue:C</span>
+                    <span class="chip">Lucro: @o.Profit:C</span>
+                    <span class="chip">M: @o.ProfitMarcos:C</span>
+                    <span class="chip">G: @o.ProfitGabi:C</span>
+                </div>
+
+                @if (o.Status != OrderStatus.Delivered)
+                {
+                    <button class="btn w-full" @onclick="(() => MarkDelivered(o))">Marcar entregue</button>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- DESKTOP: tabela -->
+    <div class="desktop-table table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cliente</th>
+                    <th>Entrega</th>
+                    <th>Itens</th>
+                    <th>Receita</th>
+                    <th>Lucro</th>
+                    <th>Split</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var o in orders)
             {
-              <li>@it.BrigadeiroType!.Name x @it.Quantity</li>
+                <tr>
+                    <td class="mono">#@o.Id</td>
+                    <td>
+                        <div>@o.CustomerName</div>
+                        <small class="muted">@o.CustomerPhone</small>
+                    </td>
+                    <td class="mono">@o.DeliveryDate:yyyy-MM-dd</td>
+                    <td>
+                        <ul class="items">
+                            @foreach (var it in o.Items)
+                            {
+                                <li>@it.BrigadeiroType!.Name x @it.Quantity</li>
+                            }
+                        </ul>
+                    </td>
+                    <td class="mono">@o.TotalRevenue:C</td>
+                    <td class="mono">@o.Profit:C</td>
+                    <td class="mono">M: @o.ProfitMarcos:C<br/>G: @o.ProfitGabi:C</td>
+                    <td><span class="@StatusClass(o.Status)"></span></td>
+                    <td>
+                        @if (o.Status != OrderStatus.Delivered)
+                        {
+                            <button class="btn btn-outline" @onclick="(() => MarkDelivered(o))">Marcar entregue</button>
+                        }
+                    </td>
+                </tr>
             }
-          </ul>
-        </td>
-        <td>@o.TotalRevenue:C</td>
-        <td>@o.Profit:C</td>
-        <td>Marcos: @o.ProfitMarcos:C<br/>Gabi: @o.ProfitGabi:C</td>
-        <td>@o.Status</td>
-        <td>
-          @if (o.Status != OrderStatus.Delivered)
-          {
-            <button @onclick="(() => MarkDelivered(o))">Marcar entregue</button>
-          }
-        </td>
-      </tr>
-    }
-    </tbody>
-  </table>
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {
@@ -76,4 +142,13 @@ else
         await Db.SaveChangesAsync();
         await Load();
     }
+
+    string StatusClass(OrderStatus s) => s switch
+    {
+        OrderStatus.New => "badge badge-new",
+        OrderStatus.InProgress => "badge badge-progress",
+        OrderStatus.Delivered => "badge badge-delivered",
+        OrderStatus.Cancelled => "badge badge-cancelled",
+        _ => "badge"
+    };
 }

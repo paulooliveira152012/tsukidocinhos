@@ -44,10 +44,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9OZXdPcmRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Components/Pages/OrderHandling.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9PcmRlckhhbmRsaW5nLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
 [/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -63,3 +59,7 @@ build_metadata.AdditionalFiles.CssScope = b-duggvb14ir
 [/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTmF2TWVudS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-h9fhkqbnjx
+
+[/Users/paulooliveira/Desktop/C\#/BrigadeiroApp/Components/Pages/OrderHandling.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9PcmRlckhhbmRsaW5nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-5res8izhhl

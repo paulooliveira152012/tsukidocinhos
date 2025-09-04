@@ -140,6 +140,7 @@
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/rjsmcshtml.dswa.cache.json
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/scopedcss/Components/Layout/MainLayout.razor.rz.scp.css
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/scopedcss/Components/Layout/NavMenu.razor.rz.scp.css
+/Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/scopedcss/Components/Pages/OrderHandling.razor.rz.scp.css
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/scopedcss/bundle/BrigadeiroApp.styles.css
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/scopedcss/projectbundle/BrigadeiroApp.bundle.scp.css
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/dof8ixe83h-khy4lop6wu.gz
@@ -187,8 +188,8 @@
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/g1ljv32j3e-h1s4sie4z3.gz
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/x2di9gkpy2-63fj8s7r0e.gz
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/iycqnfbmwa-0j3bgjxly4.gz
-/Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/zeoc8mu7f7-m505v6qcr5.gz
-/Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/i7ba9w2fv3-m505v6qcr5.gz
+/Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/zeoc8mu7f7-c6cw3nai8o.gz
+/Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/compressed/i7ba9w2fv3-c6cw3nai8o.gz
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/staticwebassets.build.json
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/staticwebassets.build.json.cache
 /Users/paulooliveira/Desktop/C#/BrigadeiroApp/obj/Debug/net9.0/staticwebassets.development.json
