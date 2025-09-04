@@ -1,4 +1,6 @@
-namespace BrigadeiroApp.models;
+using System.ComponentModel.DataAnnotations;
+
+namespace BrigadeiroApp.Models;
 
 public enum OrderStatus { New, InProgress, Delivered, Cancelled }
 
@@ -6,8 +8,8 @@ public class Order
 {
     public int Id { get; set; }
 
-    public string CustomerName { get; set; }
-    public string CustomerPhone { get; set; }
+    public string CustomerName { get; set; } = string.Empty;
+    public string CustomerPhone { get; set; } = string.Empty;
 
     public DateTime OrderDateUtc { get; set; } = DateTime.UtcNow;
     public DateTime? DeliveryDate { get; set; }
