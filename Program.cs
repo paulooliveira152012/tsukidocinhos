@@ -60,6 +60,18 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
 
+       // SEED TIPOS (só se estiver vazio)
+    if (!db.BrigadeiroTypes.Any())
+    {
+        db.BrigadeiroTypes.AddRange(
+            new BrigadeiroType { Name = "Tradicional", UnitPrice = 2.50m, UnitCost = 1.00m, Active = true },
+            new BrigadeiroType { Name = "Beijinho",   UnitPrice = 2.50m, UnitCost = 1.10m, Active = true },
+            new BrigadeiroType { Name = "Ninho",      UnitPrice = 3.00m, UnitCost = 1.30m, Active = true },
+            new BrigadeiroType { Name = "Nutella",    UnitPrice = 3.50m, UnitCost = 1.80m, Active = true }
+        );
+        await db.SaveChangesAsync();
+    }
+
     var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
