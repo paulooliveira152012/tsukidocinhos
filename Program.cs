@@ -3,7 +3,7 @@ using BrigadeiroApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// EF Core + SQLite
+// EF Core (se você estiver usando)
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
@@ -19,15 +19,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// app.UseHttpsRedirection(); // pode comentar no dev, se quiser
+// app.UseHttpsRedirection(); // opcional no dev
 app.UseStaticFiles();
 app.UseRouting();
 
-// Monta o app Blazor
+// Se tiver auth: app.UseAuthentication();
+app.UseAuthorization();
+
+// 🔒 Necessário para endpoints com antiforgery (Blazor, forms, etc.)
+app.UseAntiforgery();
+
 app.MapRazorComponents<BrigadeiroApp.Components.App>()
    .AddInteractiveServerRenderMode();
-
-// Endpoint opcional de saúde
-app.MapGet("/ping", () => new { ok = true });
 
 app.Run();
