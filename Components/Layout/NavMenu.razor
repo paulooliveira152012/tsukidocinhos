@@ -7,17 +7,11 @@
         <AuthorizeView>
             <Authorized>
                 <span class="nav-link">Olá, @context.User.Identity?.Name</span>
-                <form method="post" action="/Identity/Account/Logout" class="d-inline">
-                    <input type="hidden" name="returnUrl" value="/" />
-                    <button type="submit" class="btn btn-link nav-link">Sair</button>
-                </form>
             </Authorized>
-            <NotAuthorized>
-                <a class="nav-link" href="/Identity/Account/Login">Entrar</a>
-            </NotAuthorized>
         </AuthorizeView>
     </div>
 </div>
+
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
@@ -29,11 +23,16 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Identity/Account/Login" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Login
-            </NavLink>
-        </div>
+        <!-- Mostra "Login" só para quem NÃO está autenticado -->
+        <AuthorizeView>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Identity/Account/Login">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
 
         <!-- Marcos e Gabi veem -->
         <AuthorizeView Roles="Marcos,Gabi">
@@ -49,6 +48,14 @@
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/orderHandling">
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Pedidos
+                </NavLink>
+            </div>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Gabi, Marcos">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/logout">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>Sair
                 </NavLink>
             </div>
         </AuthorizeView>

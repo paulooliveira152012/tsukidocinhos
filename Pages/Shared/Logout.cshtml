@@ -1,0 +1,7 @@
+@page "/logout"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+<form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post" id="logoutForm"></form>
+<script>document.getElementById('logoutForm').submit();</script>
