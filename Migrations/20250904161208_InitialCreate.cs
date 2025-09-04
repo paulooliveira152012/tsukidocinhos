@@ -84,10 +84,10 @@ namespace BrigadeiroApp.Migrations
                 columns: new[] { "Id", "Active", "Name", "UnitCost", "UnitPrice" },
                 values: new object[,]
                 {
-                    { 1, false, "Tradicional", 1.00m, 2.50m },
-                    { 2, false, "Beijinho", 1.10m, 2.50m },
-                    { 3, false, "Ninho", 1.30m, 3.00m },
-                    { 4, false, "Nutella", 1.80m, 3.50m }
+                    { 1, true, "Tradicional", 1.00m, 2.50m },
+                    { 2, true, "Beijinho", 1.10m, 2.50m },
+                    { 3, true, "Ninho", 1.30m, 3.00m },
+                    { 4, true, "Nutella", 1.80m, 3.50m }
                 });
 
             migrationBuilder.CreateIndex(

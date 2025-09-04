@@ -3,9 +3,16 @@ using BrigadeiroApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// EF Core (se você estiver usando)
+// ➜ Cria caminho ABSOLUTO para o arquivo app.db dentro da pasta do app
+var dbPath = Path.Combine(builder.Environment.ContentRootPath, "app.db");
+
+// ➜ Se existir ConnectionStrings:Default, usa; senão, cai no fallback com dbPath
+var connString = builder.Configuration.GetConnectionString("Default")
+                ?? $"Data Source={dbPath}";
+
+// EF Core
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+    opt.UseSqlite(connString));
 
 // Blazor (template novo)
 builder.Services.AddRazorComponents()
@@ -19,17 +26,21 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// app.UseHttpsRedirection(); // opcional no dev
 app.UseStaticFiles();
 app.UseRouting();
-
-// Se tiver auth: app.UseAuthentication();
+// app.UseAuthentication();
 app.UseAuthorization();
-
-// 🔒 Necessário para endpoints com antiforgery (Blazor, forms, etc.)
 app.UseAntiforgery();
 
 app.MapRazorComponents<BrigadeiroApp.Components.App>()
    .AddInteractiveServerRenderMode();
+
+// ➜ APLICA MIGRATIONS AUTOMATICAMENTE AO SUBIR
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    app.Logger.LogInformation("SQLite DB em: {path}", dbPath);
+    db.Database.Migrate(); // cria/atualiza tabelas
+}
 
 app.Run();

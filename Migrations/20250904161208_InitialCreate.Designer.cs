@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrigadeiroApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250904134732_InitialCreate")]
+    [Migration("20250904161208_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,7 +47,7 @@ namespace BrigadeiroApp.Migrations
                         new
                         {
                             Id = 1,
-                            Active = false,
+                            Active = true,
                             Name = "Tradicional",
                             UnitCost = 1.00m,
                             UnitPrice = 2.50m
@@ -55,7 +55,7 @@ namespace BrigadeiroApp.Migrations
                         new
                         {
                             Id = 2,
-                            Active = false,
+                            Active = true,
                             Name = "Beijinho",
                             UnitCost = 1.10m,
                             UnitPrice = 2.50m
@@ -63,7 +63,7 @@ namespace BrigadeiroApp.Migrations
                         new
                         {
                             Id = 3,
-                            Active = false,
+                            Active = true,
                             Name = "Ninho",
                             UnitCost = 1.30m,
                             UnitPrice = 3.00m
@@ -71,7 +71,7 @@ namespace BrigadeiroApp.Migrations
                         new
                         {
                             Id = 4,
-                            Active = false,
+                            Active = true,
                             Name = "Nutella",
                             UnitCost = 1.80m,
                             UnitPrice = 3.50m

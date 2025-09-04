@@ -1,0 +1,79 @@
+@page "/orderHandling"
+@inject AppDbContext Db
+
+<h2>Pedidos (Gabi)</h2>
+
+<div style="display:flex; gap:12px; align-items:center">
+  <label>Data de entrega:</label>
+  <input type="date" @bind="filterDate" />
+  <button @onclick="Load">Filtrar</button>
+</div>
+
+@if (orders is null) { <p>Carregando...</p> }
+else if (orders.Count == 0) { <p>Nenhuma ordem.</p> }
+else
+{
+  <table border="1" cellpadding="6" style="margin-top:10px">
+    <thead>
+      <tr>
+        <th>#</th><th>Cliente</th><th>Entrega</th><th>Itens</th>
+        <th>Receita</th><th>Lucro</th><th>Split</th><th>Status</th><th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+    @foreach (var o in orders)
+    {
+      <tr>
+        <td>@o.Id</td>
+        <td>@o.CustomerName<br /><small>@o.CustomerPhone</small></td>
+        <td>@o.DeliveryDate:yyyy-MM-dd</td>
+        <td>
+          <ul style="margin:0">
+            @foreach (var it in o.Items)
+            {
+              <li>@it.BrigadeiroType!.Name x @it.Quantity</li>
+            }
+          </ul>
+        </td>
+        <td>@o.TotalRevenue:C</td>
+        <td>@o.Profit:C</td>
+        <td>Marcos: @o.ProfitMarcos:C<br/>Gabi: @o.ProfitGabi:C</td>
+        <td>@o.Status</td>
+        <td>
+          @if (o.Status != OrderStatus.Delivered)
+          {
+            <button @onclick="(() => MarkDelivered(o))">Marcar entregue</button>
+          }
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+}
+
+@code {
+    private DateTime? filterDate = DateTime.Today;
+    private List<Order>? orders;
+
+    protected override Task OnInitializedAsync() => Load();
+
+    async Task Load()
+    {
+        var q = Db.Orders
+            .Include(o => o.Items).ThenInclude(i => i.BrigadeiroType)
+            .OrderByDescending(o => o.Id)
+            .AsQueryable();
+
+        if (filterDate is not null)
+            q = q.Where(o => o.DeliveryDate != null && o.DeliveryDate.Value.Date == filterDate.Value.Date);
+
+        orders = await q.ToListAsync();
+    }
+
+    async Task MarkDelivered(Order o)
+    {
+        o.Status = OrderStatus.Delivered;
+        await Db.SaveChangesAsync();
+        await Load();
+    }
+}

@@ -1,0 +1,87 @@
+@page "/newOrder"
+@inject AppDbContext Db
+
+<h2>Nova Ordem</h2>
+
+@if (types is null)
+{
+    <p>Carregando tipos...</p>
+}
+else
+{
+    <EditForm Model="@model" OnValidSubmit="@Save">
+        <DataAnnotationsValidator />
+        <div style="display:flex; gap:10px; margin-bottom:8px">
+            <input placeholder="Cliente" @bind="model.CustomerName" />
+            <input placeholder="Telefone" @bind="model.CustomerPhone" />
+            <input type="date" @bind="deliveryDate" />
+        </div>
+
+        <h4>Itens</h4>
+        @foreach (var item in items)
+        {
+            <div style="display:flex; gap:8px; margin-bottom:6px">
+                <select @bind="item.BrigadeiroTypeId">
+                    @foreach (var t in types)
+                    {
+                        <option value="@t.Id">@t.Name (@t.UnitPrice:C)</option>
+                    }
+                </select>
+                <input type="number" min="1" @bind="item.Quantity" style="width:80px" />
+                <button type="button" @onclick="(() => RemoveItem(item))">Remover</button>
+            </div>
+        }
+        <button type="button" @onclick="AddItem">+ Adicionar item</button>
+
+        <div style="margin-top:12px">
+            <button type="submit">Salvar ordem</button>
+        </div>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(message)) { <p>@message</p> }
+}
+
+@code {
+    private List<BrigadeiroType>? types;
+    private Order model = new();
+    private List<OrderItem> items = new() { new OrderItem { Quantity = 1, BrigadeiroTypeId = 1 } };
+    private DateTime? deliveryDate = DateTime.Today;
+    private string? message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        types = await Db.BrigadeiroTypes.Where(t => t.Active).OrderBy(t => t.Name).ToListAsync();
+        if (types.Count > 0 && items[0].BrigadeiroTypeId == 0)
+            items[0].BrigadeiroTypeId = types[0].Id;
+    }
+
+    void AddItem() => items.Add(new OrderItem { Quantity = 1, BrigadeiroTypeId = types!.First().Id });
+    void RemoveItem(OrderItem it) => items.Remove(it);
+
+    async Task Save()
+    {
+        if (types is null || items.Count == 0 || string.IsNullOrWhiteSpace(model.CustomerName)) return;
+
+        // congelar preço/custo do momento do pedido
+        foreach (var it in items)
+        {
+            var t = types.First(x => x.Id == it.BrigadeiroTypeId);
+            it.UnitPrice = t.UnitPrice;
+            it.UnitCost  = t.UnitCost;
+        }
+
+        model.Items = items.ToList();
+        model.DeliveryDate = deliveryDate;
+
+        model.TotalRevenue = model.Items.Sum(i => i.UnitPrice * i.Quantity);
+        model.TotalCost    = model.Items.Sum(i => i.UnitCost  * i.Quantity);
+        model.Profit       = model.TotalRevenue - model.TotalCost;
+        model.CreatedBy    = "Marcos";
+
+        Db.Orders.Add(model);
+        await Db.SaveChangesAsync();
+
+        message = $"Ordem #{model.Id} criada! Receita: {model.TotalRevenue:C} | Lucro: {model.Profit:C}";
+        model = new(); items = new() { new OrderItem { Quantity = 1, BrigadeiroTypeId = types.First().Id } };
+    }
+}

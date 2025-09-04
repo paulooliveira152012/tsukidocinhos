@@ -13,25 +13,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         base.OnModelCreating(b);
 
-        // ---- Relacionamentos explícitos ----
-        b.Entity<OrderItem>(entity =>
+        // Order 1..N OrderItem
+        b.Entity<OrderItem>(e =>
         {
-            // Order 1..N OrderItem (FK = OrderId)
-            entity.HasOne(i => i.Order)
-                  .WithMany(o => o.Items)
-                  .HasForeignKey(i => i.OrderId)
-                  .IsRequired()
-                  .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(i => i.Order)
+             .WithMany(o => o.Items)
+             .HasForeignKey(i => i.OrderId)
+             .IsRequired()
+             .OnDelete(DeleteBehavior.Cascade);
 
-            // OrderItem N..1 BrigadeiroType (FK = BrigadeiroTypeId)
-            entity.HasOne(i => i.BrigadeiroType)
-                  .WithMany()
-                  .HasForeignKey(i => i.BrigadeiroTypeId)
-                  .IsRequired()
-                  .OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(i => i.BrigadeiroType)
+             .WithMany()
+             .HasForeignKey(i => i.BrigadeiroTypeId)
+             .IsRequired()
+             .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // ---- Seed de tipos ----
+        // Seed
         b.Entity<BrigadeiroType>().HasData(
             new BrigadeiroType { Id=1, Name="Tradicional", UnitPrice=2.50m, UnitCost=1.00m },
             new BrigadeiroType { Id=2, Name="Beijinho",   UnitPrice=2.50m, UnitCost=1.10m },

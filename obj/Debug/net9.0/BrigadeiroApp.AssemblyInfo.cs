@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BrigadeiroApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79931742fe21e9265345441a2932e461bd51b16c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f8940a5eb1669e09e1fef5035634820b4a622c1")]
 [assembly: System.Reflection.AssemblyProductAttribute("BrigadeiroApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BrigadeiroApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
