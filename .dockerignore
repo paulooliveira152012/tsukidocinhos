@@ -1,0 +1,12 @@
+cat > .dockerignore <<'EOF'
+bin
+obj
+*.user
+*.suo
+*.swp
+*.db
+.env
+Dockerfile
+.git
+.gitignore
+EOF
